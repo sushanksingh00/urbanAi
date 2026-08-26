@@ -33,3 +33,13 @@ Thumbs.db
 
 # Environment
 .env
+
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+data/raw/*
+data/processed/*
+data/external/*
+
+*.npz
