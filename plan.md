@@ -336,13 +336,13 @@ deployment/
 
 Tasks:
 
-- [ ] Clean/reinitialize repository
-- [ ] Configure Git
+- [x] Clean/reinitialize repository
+- [x] Configure Git
 - [ ] Push to GitHub
-- [ ] Create requirements.txt
-- [ ] Configure .gitignore
-- [ ] Configure centralized project paths
-- [ ] Test local Python
+- [x] Create requirements.txt
+- [x] Configure .gitignore
+- [x] Configure centralized project paths
+- [x] Test local Python
 - [ ] Test Colab
 - [ ] Test PyTorch
 - [ ] Test CUDA/GPU
@@ -364,20 +364,20 @@ notebooks/01_dataset_exploration.ipynb
 
 Tasks:
 
-- [ ] Obtain METR-LA
-- [ ] Store raw data correctly
-- [ ] Document dataset source
-- [ ] Identify sensors
-- [ ] Identify sampling frequency
-- [ ] Identify traffic variable
-- [ ] Inspect timestamps
-- [ ] Inspect missing values
-- [ ] Inspect abnormal values
-- [ ] Inspect sensor metadata
-- [ ] Inspect adjacency matrix
-- [ ] Visualize traffic distributions
-- [ ] Visualize traffic over time
-- [ ] Document dataset statistics
+- [x] Obtain METR-LA
+- [x] Store raw data correctly
+- [x] Document dataset source
+- [x] Identify sensors
+- [x] Identify sampling frequency
+- [x] Identify traffic variable
+- [x] Inspect timestamps
+- [x] Inspect missing values
+- [x] Inspect abnormal values
+- [x] Inspect sensor metadata
+- [x] Inspect adjacency matrix
+- [x] Visualize traffic distributions
+- [x] Visualize traffic over time
+- [x] Document dataset statistics
 
 Do not start FastAPI, React, PostgreSQL, Docker, or research extensions here.
 
@@ -989,8 +989,8 @@ Do not rely on memory for results.
 # 22. Reset Status
 
 ```text
-Phase 0  — Environment + Git + Colab       [ ] Not Started
-Phase 1  — Dataset Exploration             [ ] Not Started
+Phase 0  — Environment + Git + Colab       [x] Partially Complete (Pending GitHub/Colab tests)
+Phase 1  — Dataset Exploration             [x] Completed
 Phase 2  — Preprocessing                   [ ] Not Started
 Phase 3  — Baselines                       [ ] Not Started
 Phase 4  — STGCN                           [ ] Not Started
