@@ -1,198 +1,279 @@
+# UrbanFlow AI — Revised Development Plan
 
-# UrbanFlow AI — Development Plan
+## Goal
 
-## Intelligent Traffic Prediction using Spatio-Temporal Graph Neural Networks
+UrbanFlow AI is an intelligent traffic forecasting research system using Spatio-Temporal Graph Neural Networks (STGNNs).
 
----
+**Immediate priority:** build and verify the AI/ML system for academic evaluation, project marks, research, and resume presentation.
 
-# 1. Project Overview
+**Later:** build the full application around the validated ML system.
 
-UrbanFlow AI is an end-to-end intelligent traffic prediction platform using Spatio-Temporal Graph Neural Networks (STGNNs).
-
-The project has two main goals:
-
-### Software Goal
-
-Build a complete traffic prediction platform with:
-
-- ML prediction engine
-- FastAPI backend
-- PostgreSQL database
-- React dashboard
-- REST APIs
-- Docker deployment
-
-### Research Goal
-
-- Implement established traffic forecasting models
-- Compare baseline models
-- Implement an STGNN
-- Perform a literature review
-- Identify a research gap
-- Propose one improvement
-- Evaluate the improvement experimentally
-- Prepare a research paper
+The application layer is intentionally postponed:
+- FastAPI
+- PostgreSQL
+- React
+- Docker
+- Deployment
 
 ---
 
-# 2. Development Philosophy
-
-Do NOT start by building the dashboard.
-
-The ML pipeline is the core of the project.
-
-Development order:
+## Development Order
 
 ```text
-Research
-    ↓
 Dataset
-    ↓
-Data Processing
-    ↓
-Baseline Models
-    ↓
-STGNN
-    ↓
-Research Improvement
-    ↓
-Experiments
-    ↓
-ML Inference API
-    ↓
-Backend
-    ↓
-Database
-    ↓
-Dashboard
-    ↓
+  ↓
+Exploration
+  ↓
+Preprocessing
+  ↓
+Baselines
+  ↓
+STGCN
+  ↓
+Evaluation
+  ↓
+Literature Review
+  ↓
+Proposed Research Model
+  ↓
+Ablation + Error Analysis
+  ↓
+Inference Engine
+  ↓
+========== AI/RESEARCH CORE COMPLETE ==========
+  ↓
+FastAPI
+  ↓
+PostgreSQL
+  ↓
+React Dashboard
+  ↓
 Docker
-    ↓
+  ↓
 Deployment
-    ↓
-Research Paper
-````
-
-The first objective is simple:
-
-```text
-Past Traffic
-     ↓
-STGNN
-     ↓
-Future Traffic
+  ↓
+Paper + Presentation
 ```
 
-Only after this works should the software platform be built.
-
 ---
 
-# 3. Technology Stack
+# 1. Mac + GitHub + Colab Setup
 
-## Machine Learning
+## Source of truth
 
-* Python
-* PyTorch
-* NumPy
-* Pandas
-* Scikit-learn
-* Matplotlib
-* Jupyter Notebook
+The permanent source of truth is the local Mac project and GitHub repository.
 
-## Backend
-
-* FastAPI
-* Pydantic
-* Uvicorn
-
-## Database
-
-* PostgreSQL
-
-## Frontend
-
-* React
-* TypeScript
-* Tailwind CSS
-* Recharts or Plotly
-* Map visualization library
-
-## Infrastructure
-
-* Git
-* GitHub
-* Docker
-* Docker Compose
-
----
-
-# 4. Dataset Strategy
-
-Start with an established traffic forecasting benchmark.
-
-Preferred datasets:
-
-1. METR-LA
-2. PEMS-BAY
-3. PEMS04
-4. PEMS08
-
-Initial recommendation:
+Example:
 
 ```text
-METR-LA or PEMS-BAY
+/Users/sushank/Documents/GitHub/urbanAi
 ```
 
-Do not start with live traffic APIs.
+Antigravity edits the local project.
 
-Do not start with Indian traffic data.
+GitHub stores the source.
 
-The first objective is reproducible research using a standard benchmark dataset.
+Colab is a temporary GPU execution environment.
+
+```text
+Mac / Antigravity
+       ↓
+     GitHub
+       ↓
+     Colab
+       ↓
+   GPU execution
+```
+
+If Colab disconnects or resets:
+
+```text
+New Colab runtime
+      ↓
+git clone / git pull
+      ↓
+install requirements
+      ↓
+restore/download dataset
+      ↓
+continue
+```
+
+Do not depend on manually uploaded source files surviving a Colab reset.
+
+Never hardcode Mac paths inside notebooks or source code.
+
+Use centralized project paths.
 
 ---
 
-# 5. Initial Prediction Task
+# 2. Technology Scope
 
-Start with:
+## Current ML/Research Stack
+
+- Python
+- PyTorch
+- NumPy
+- Pandas
+- Scikit-learn
+- Matplotlib
+- Jupyter
+- Google Colab GPU
+- Git
+- GitHub
+
+## Later Application Stack
+
+- FastAPI
+- Pydantic
+- PostgreSQL
+- React
+- TypeScript
+- Tailwind CSS
+- Recharts/Plotly
+- Map visualization
+- Docker
+- Docker Compose
+- Cloud deployment
+
+Do not implement the application layer during the initial ML phase.
+
+---
+
+# 3. Dataset
+
+Primary dataset:
 
 ```text
+METR-LA
+```
+
+Initial goal is reproducible research using a standard traffic forecasting benchmark.
+
+Expected graph size:
+
+```text
+207 traffic sensors/nodes
+```
+
+Raw traffic may be represented as:
+
+```text
+(time, nodes)
+```
+
+Model representation must preserve a feature dimension:
+
+```text
+(time, nodes, features)
+```
+
+For this project:
+
+```text
+features = 1
+```
+
+---
+
+# 4. Canonical Prediction Task
+
+This is a **hard project invariant**.
+
+Do NOT change the base task to 12 → 12.
+
+Initial task:
+
+```text
+Previous 60 minutes
+        ↓
+      Model
+        ↓
+Next 15 minutes
+```
+
+With 5-minute intervals:
+
+```text
+history_steps = 12
+horizon_steps = 3
+```
+
+## Canonical tensor contract
+
+Raw:
+
+```text
+(T, 207)
+```
+
+Model-ready:
+
+```text
+(T, 207, 1)
+```
+
 Input:
-Previous 60 minutes of traffic
+
+```text
+X = (N, 12, 207, 1)
+```
+
+Target:
+
+```text
+Y = (N, 3, 207, 1)
+```
+
+DataLoader:
+
+```text
+batch_x = (B, 12, 207, 1)
+batch_y = (B, 3, 207, 1)
+```
+
+Every baseline and neural model must follow this contract.
 
 Output:
-Next 15 minutes of traffic
-```
-
-If the dataset uses 5-minute intervals:
 
 ```text
-Input  = 12 time steps
-Output = 3 time steps
+prediction = (B, 3, 207, 1)
 ```
 
-After the initial model works, extend to:
+Sequence generation:
+
+```python
+X[i] = traffic[t : t + 12]
+Y[i] = traffic[t + 12 : t + 15]
+```
+
+Therefore:
 
 ```text
-12 → 3     # 15 minutes
-12 → 6     # 30 minutes
-12 → 12    # 60 minutes
+X[i] = (12, 207, 1)
+Y[i] = (3, 207, 1)
 ```
 
-Do not try to solve every prediction horizon immediately.
+Do NOT:
+- change horizon to 12 just to fix errors
+- add notebook-specific unsqueeze/reshape hacks
+- squeeze away the feature dimension
+- modify models merely to accept broken preprocessing output
+
+Fix the source preprocessing pipeline if the contract is violated.
 
 ---
 
-# 6. Project Structure
+# 5. Project Structure
 
 ```text
-urbanflow-ai/
-│
+urbanAi/
 ├── README.md
 ├── PLAN.md
 ├── requirements.txt
 ├── .gitignore
 ├── .env.example
-├── docker-compose.yml
+├── project_paths.py
 │
 ├── data/
 │   ├── raw/
@@ -203,39 +284,31 @@ urbanflow-ai/
 │   ├── 01_dataset_exploration.ipynb
 │   ├── 02_data_preprocessing.ipynb
 │   ├── 03_baselines.ipynb
-│   └── 04_stgnn_experiments.ipynb
+│   ├── 04_stgcn.ipynb
+│   ├── 05_evaluation.ipynb
+│   └── 06_proposed_model.ipynb
 │
-├── ml/
-│   ├── __init__.py
-│   │
+├── src/
 │   ├── data/
-│   │   ├── __init__.py
-│   │   ├── dataset.py
 │   │   ├── preprocessing.py
+│   │   ├── sequence.py
+│   │   ├── dataset.py
 │   │   ├── graph.py
 │   │   └── dataloader.py
-│   │
 │   ├── models/
-│   │   ├── __init__.py
 │   │   ├── baseline.py
 │   │   ├── lstm.py
 │   │   ├── stgcn.py
-│   │   └── proposed_model.py
-│   │
+│   │   └── proposed.py
 │   ├── training/
-│   │   ├── __init__.py
 │   │   ├── train.py
 │   │   ├── config.py
 │   │   └── checkpoints.py
-│   │
 │   ├── evaluation/
-│   │   ├── __init__.py
 │   │   ├── metrics.py
 │   │   ├── evaluate.py
 │   │   └── visualization.py
-│   │
 │   └── inference/
-│       ├── __init__.py
 │       └── predictor.py
 │
 ├── experiments/
@@ -243,243 +316,175 @@ urbanflow-ai/
 │   ├── stgcn/
 │   └── proposed/
 │
-├── backend/
-│   ├── app/
-│   │   ├── main.py
-│   │   ├── config.py
-│   │   ├── api/
-│   │   │   ├── traffic.py
-│   │   │   ├── predictions.py
-│   │   │   └── analytics.py
-│   │   ├── models/
-│   │   ├── schemas/
-│   │   ├── services/
-│   │   └── database/
-│   │
-│   └── Dockerfile
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   ├── hooks/
-│   │   └── types/
-│   └── Dockerfile
-│
-├── docs/
-│   ├── research/
-│   ├── architecture/
-│   ├── experiments/
-│   └── api/
-│
-└── deployment/
-    ├── docker/
-    └── scripts/
+└── docs/
+    ├── research/
+    ├── experiments/
+    └── architecture/
+```
+
+Later:
+
+```text
+backend/
+frontend/
+deployment/
 ```
 
 ---
 
-# 7. Phase 0 — Environment Setup
+# 6. Phase 0 — Environment + Reproducibility
 
-## Objective
+Tasks:
 
-Create a clean and reproducible development environment.
+- [ ] Clean/reinitialize repository
+- [ ] Configure Git
+- [ ] Push to GitHub
+- [ ] Create requirements.txt
+- [ ] Configure .gitignore
+- [ ] Configure centralized project paths
+- [ ] Test local Python
+- [ ] Test Colab
+- [ ] Test PyTorch
+- [ ] Test CUDA/GPU
+- [ ] Verify GitHub → Colab workflow
 
-## Tasks
+Definition of done:
 
-* [ ] Install Python
-* [ ] Create virtual environment
-* [ ] Install PyTorch
-* [ ] Install NumPy
-* [ ] Install Pandas
-* [ ] Install Scikit-learn
-* [ ] Install Matplotlib
-* [ ] Install Jupyter
-* [ ] Install FastAPI
-* [ ] Install Uvicorn
-* [ ] Configure Git
-* [ ] Create GitHub repository
-* [ ] Create `.gitignore`
-* [ ] Create `requirements.txt`
-* [ ] Create project folder structure
-
-## Definition of Done
-
-The following commands work:
-
-```bash
-python --version
-```
-
-```bash
-python -c "import torch; print(torch.__version__)"
-```
+A fresh Colab runtime can obtain the project from GitHub and execute it without manually reconstructing source files.
 
 ---
 
-# 8. Phase 1 — Dataset Exploration
+# 7. Phase 1 — Dataset Exploration
 
-## Objective
-
-Understand the dataset before building models.
-
-## Tasks
-
-* [ ] Download dataset
-* [ ] Store raw data in `data/raw/`
-* [ ] Document dataset source
-* [ ] Identify number of sensors
-* [ ] Identify sampling frequency
-* [ ] Identify target variable
-* [ ] Inspect missing values
-* [ ] Inspect timestamps
-* [ ] Inspect sensor metadata
-* [ ] Inspect graph/adjacency information
-* [ ] Visualize traffic distributions
-* [ ] Visualize traffic over time
-* [ ] Identify abnormal values
-* [ ] Document dataset statistics
-
-## Questions to Answer
-
-* How many nodes are there?
-* What does each node represent?
-* What is the sampling interval?
-* What does the traffic value represent?
-* How are nodes connected?
-* How much data is available?
-* Are there missing values?
-* Are there anomalies?
-
-## Deliverable
+Notebook:
 
 ```text
 notebooks/01_dataset_exploration.ipynb
 ```
 
----
+Tasks:
 
-# 9. Phase 2 — Data Preprocessing
+- [ ] Obtain METR-LA
+- [ ] Store raw data correctly
+- [ ] Document dataset source
+- [ ] Identify sensors
+- [ ] Identify sampling frequency
+- [ ] Identify traffic variable
+- [ ] Inspect timestamps
+- [ ] Inspect missing values
+- [ ] Inspect abnormal values
+- [ ] Inspect sensor metadata
+- [ ] Inspect adjacency matrix
+- [ ] Visualize traffic distributions
+- [ ] Visualize traffic over time
+- [ ] Document dataset statistics
 
-## Objective
-
-Convert raw traffic data into model-ready sequences.
-
-## Tasks
-
-* [ ] Clean data
-* [ ] Handle missing values
-* [ ] Normalize traffic values
-* [ ] Construct graph representation
-* [ ] Construct adjacency matrix
-* [ ] Create sliding windows
-* [ ] Create train/validation/test split
-* [ ] Prevent temporal data leakage
-* [ ] Create PyTorch Dataset
-* [ ] Create DataLoader
-* [ ] Verify tensor dimensions
-
-## Target Input
-
-```text
-(batch, time, nodes, features)
-```
-
-Example:
-
-```text
-(32, 12, 207, 1)
-```
-
-## Target Output
-
-```text
-(batch, prediction_time, nodes, features)
-```
-
-Example:
-
-```text
-(32, 3, 207, 1)
-```
-
-## Definition of Done
-
-This pipeline works:
-
-```text
-Raw Dataset
-     ↓
-Preprocessing
-     ↓
-PyTorch Dataset
-     ↓
-DataLoader
-```
+Do not start FastAPI, React, PostgreSQL, Docker, or research extensions here.
 
 ---
 
-# 10. Phase 3 — Baseline Models
+# 8. Phase 2 — Data Preprocessing
 
-## Objective
+Goal: convert raw METR-LA into model-ready sequences.
 
-Create simple models before using GNNs.
+Files:
 
-This phase is mandatory.
+```text
+src/data/preprocessing.py
+src/data/sequence.py
+src/data/dataset.py
+src/data/graph.py
+```
 
----
+Notebook:
 
-## Baseline 1 — Historical Average
-
-Predict historical average traffic.
+```text
+notebooks/02_data_preprocessing.ipynb
+```
 
 Tasks:
 
-* [ ] Implement
-* [ ] Evaluate
-* [ ] Save results
+- [ ] Load raw traffic
+- [ ] Clean data
+- [ ] Handle missing values
+- [ ] Normalize values
+- [ ] Process adjacency matrix
+- [ ] Chronological train/validation/test split
+- [ ] Prevent temporal leakage
+- [ ] Create sliding windows
+- [ ] Create PyTorch Dataset
+- [ ] Create DataLoader
+- [ ] Verify tensor dimensions
+- [ ] Save processed sequences
+
+## Definition of done
+
+Saved files:
+
+```text
+train:
+X = (N, 12, 207, 1)
+Y = (N, 3, 207, 1)
+
+validation:
+X = (N, 12, 207, 1)
+Y = (N, 3, 207, 1)
+
+test:
+X = (N, 12, 207, 1)
+Y = (N, 3, 207, 1)
+```
+
+DataLoader:
+
+```text
+batch_x = (B, 12, 207, 1)
+batch_y = (B, 3, 207, 1)
+```
+
+Do not proceed if these shapes are wrong.
 
 ---
 
-## Baseline 2 — Last Value
+# 9. Phase 3 — Baseline Models
 
-Predict the most recent traffic value.
+Mandatory:
+
+1. Historical Average
+2. Last Value
+3. Linear Regression
+4. LSTM
+
+Input:
+
+```text
+(B, 12, 207, 1)
+```
+
+Output:
+
+```text
+(B, 3, 207, 1)
+```
 
 Tasks:
 
-* [ ] Implement
-* [ ] Evaluate
-* [ ] Save results
+- [ ] Implement Historical Average
+- [ ] Implement Last Value
+- [ ] Implement Linear Regression
+- [ ] Implement LSTM
+- [ ] Train applicable models
+- [ ] Evaluate
+- [ ] Save results
+- [ ] Save LSTM checkpoint
 
----
+Notebook:
 
-## Baseline 3 — Linear Regression
+```text
+notebooks/03_baselines.ipynb
+```
 
-Tasks:
-
-* [ ] Implement
-* [ ] Train
-* [ ] Evaluate
-* [ ] Save results
-
----
-
-## Baseline 4 — LSTM
-
-Tasks:
-
-* [ ] Implement LSTM
-* [ ] Train
-* [ ] Tune
-* [ ] Evaluate
-* [ ] Save checkpoint
-
----
-
-## Deliverable
-
-Create:
+Deliverable:
 
 ```text
 experiments/baseline/results.csv
@@ -497,19 +502,11 @@ LSTM,...
 
 ---
 
-# 11. Phase 4 — STGCN
+# 10. Phase 4 — STGCN
 
-## Objective
+Goal: implement an established Spatio-Temporal Graph Neural Network.
 
-Implement an established Spatio-Temporal Graph Neural Network.
-
-Initial model:
-
-```text
-STGCN
-```
-
-Architecture concept:
+Architecture:
 
 ```text
 Input
@@ -524,304 +521,191 @@ Graph Convolution
   ↓
 Prediction Layer
   ↓
-Future Traffic
+3-step future prediction
 ```
 
-## Tasks
+Tasks:
 
-* [ ] Read the STGCN paper
-* [ ] Understand graph convolution
-* [ ] Understand temporal convolution
-* [ ] Implement STGCN
-* [ ] Test tensor shapes
-* [ ] Run forward pass
-* [ ] Train model
-* [ ] Monitor training loss
-* [ ] Monitor validation loss
-* [ ] Tune hyperparameters
-* [ ] Save best checkpoint
-* [ ] Evaluate on test data
+- [ ] Study STGCN
+- [ ] Understand graph convolution
+- [ ] Understand temporal convolution
+- [ ] Implement graph processing
+- [ ] Implement STGCN
+- [ ] Verify forward-pass shapes
+- [ ] Train on Colab GPU
+- [ ] Track training loss
+- [ ] Track validation loss
+- [ ] Tune hyperparameters
+- [ ] Save best checkpoint
+- [ ] Evaluate on test set
 
-## Deliverables
+Files:
 
 ```text
-ml/models/stgcn.py
+src/models/stgcn.py
+src/data/graph.py
+src/training/train.py
 ```
 
-and:
+Notebook:
+
+```text
+notebooks/04_stgcn.ipynb
+```
+
+Deliverables:
 
 ```text
 experiments/stgcn/
+├── checkpoints/
+├── metrics.csv
+└── plots/
 ```
 
 ---
 
-# 12. Phase 5 — Evaluation Framework
+# 11. Phase 5 — Unified Evaluation
 
-## Objective
-
-Create one consistent evaluation system for all models.
-
-## Metrics
-
-Implement:
-
-* [ ] MAE
-* [ ] RMSE
-* [ ] MAPE
-
-Optional:
-
-* [ ] WAPE
-* [ ] R²
-* [ ] MAE by prediction horizon
-
-## Model Comparison
-
-Compare:
+Models:
 
 ```text
 Historical Average
-        ↓
 Last Value
-        ↓
 Linear Regression
-        ↓
 LSTM
-        ↓
 STGCN
 ```
 
-## Visualizations
+Metrics:
 
-Create:
+- [ ] MAE
+- [ ] RMSE
+- [ ] MAPE
+- [ ] WAPE
+- [ ] R²
+- [ ] MAE by prediction horizon
 
-* [ ] Actual vs predicted traffic
-* [ ] Training loss
-* [ ] Validation loss
-* [ ] Error distribution
-* [ ] Error by prediction horizon
-* [ ] Node-level performance
+Visualizations:
 
-## Deliverable
+- [ ] Actual vs predicted
+- [ ] Training loss
+- [ ] Validation loss
+- [ ] Error distribution
+- [ ] Error by horizon
+- [ ] Node-level performance
 
-Create:
+Files:
 
 ```text
-ml/evaluation/metrics.py
-ml/evaluation/evaluate.py
-ml/evaluation/visualization.py
+src/evaluation/metrics.py
+src/evaluation/evaluate.py
+src/evaluation/visualization.py
 ```
+
+Notebook:
+
+```text
+notebooks/05_evaluation.ipynb
+```
+
+Never hardcode or fabricate experimental results.
 
 ---
 
-# 13. Phase 6 — Literature Review
-
-## Objective
-
-Find a genuine research opportunity.
-
-Do NOT choose the research contribution before completing this phase.
-
-## Research Topics
+# 12. Phase 6 — Literature Review
 
 Study:
 
-* STGCN
-* DCRNN
-* Graph WaveNet
-* ASTGCN
-* MTGNN
-* Dynamic graph methods
-* Weather-aware forecasting
-* Event-aware forecasting
-* Accident-aware forecasting
-* Explainable GNNs
-* Lightweight GNNs
+- STGCN
+- DCRNN
+- Graph WaveNet
+- ASTGCN
+- MTGNN
+- Dynamic graph methods
+- Weather-aware forecasting
+- Event-aware forecasting
+- Accident-aware forecasting
+- Explainable GNNs
+- Lightweight GNNs
 
-## Tasks
+Tasks:
 
-* [ ] Collect 15–25 relevant papers
-* [ ] Read abstracts
-* [ ] Read methodology
-* [ ] Record datasets
-* [ ] Record models
-* [ ] Record metrics
-* [ ] Record limitations
-* [ ] Record future work
-* [ ] Create literature comparison table
-* [ ] Identify recurring limitations
-* [ ] Select one research direction
+- [ ] Collect 15–25 relevant papers
+- [ ] Read abstracts
+- [ ] Read methodology
+- [ ] Record datasets
+- [ ] Record models
+- [ ] Record metrics
+- [ ] Record limitations
+- [ ] Record future work
+- [ ] Create literature comparison table
+- [ ] Identify recurring limitations
+- [ ] Select one research direction
 
-## Deliverable
+Deliverable:
 
 ```text
 docs/research/literature_review.md
 ```
 
+Do not claim novelty before completing this phase.
+
 ---
 
-# 14. Phase 7 — Select Research Contribution
+# 13. Phase 7 — Proposed Research Model
 
 Possible directions:
 
-## Option A — Dynamic Graph
+- Dynamic/adaptive graph
+- Weather-aware STGNN
+- Event-aware STGNN
+- Accident-aware STGNN
+- Explainable STGNN
+- Lightweight STGNN
 
-Allow the model to learn changing relationships between traffic nodes.
+Do not automatically select one before literature review.
+
+Tasks after selection:
+
+- [ ] Define hypothesis
+- [ ] Define architecture
+- [ ] Define additional inputs/components
+- [ ] Implement proposed model
+- [ ] Train
+- [ ] Tune
+- [ ] Evaluate
+- [ ] Compare against STGCN
+- [ ] Save checkpoint
+- [ ] Record experiments
+
+Notebook:
 
 ```text
-Graph at t1
-    ↓
-Graph at t2
-    ↓
-Graph at t3
+notebooks/06_proposed_model.ipynb
 ```
 
 ---
 
-## Option B — Weather-Aware STGNN
-
-Add weather information:
-
-```text
-Traffic
-   +
-Weather
-   ↓
-STGNN
-```
-
----
-
-## Option C — Event-Aware STGNN
-
-Add events such as:
-
-* Concerts
-* Sports events
-* Festivals
-* Public gatherings
-
----
-
-## Option D — Accident-Aware STGNN
-
-Add accident information.
-
----
-
-## Option E — Explainable STGNN
-
-Provide explanations for predictions.
-
-Example:
-
-```text
-Predicted Congestion: HIGH
-
-Possible contributing factors:
-
-1. Upstream congestion
-2. Sudden traffic increase
-3. Adjacent road congestion
-4. External conditions
-```
-
----
-
-## Option F — Lightweight STGNN
-
-Reduce:
-
-* Model parameters
-* Memory usage
-* Inference time
-
-while maintaining prediction accuracy.
-
----
-
-# 15. Research Direction Selection
-
-Choose the final research direction using:
-
-| Criterion                 | Importance |
-| ------------------------- | ---------- |
-| Novelty                   | High       |
-| Dataset availability      | High       |
-| Reproducibility           | High       |
-| Research value            | High       |
-| Implementation difficulty | Medium     |
-| Evaluation feasibility    | High       |
-| Time required             | High       |
-
-Do not choose an idea just because it sounds impressive.
-
-Choose an idea that can be experimentally validated.
-
----
-
-# 16. Phase 8 — Proposed Model
-
-## Objective
-
-Implement the selected research improvement.
+# 14. Phase 8 — Ablation Study
 
 Example:
 
 ```text
 STGCN
-  +
-Weather Features
-  ↓
-Proposed STGNN
+STGCN + Component A
+STGCN + Component B
+STGCN + A + B
 ```
 
-## Tasks
+Tasks:
 
-* [ ] Define research hypothesis
-* [ ] Define architecture
-* [ ] Define additional inputs
-* [ ] Implement proposed model
-* [ ] Train model
-* [ ] Tune hyperparameters
-* [ ] Evaluate
-* [ ] Compare with STGCN
-* [ ] Save checkpoints
-* [ ] Record experiments
+- [ ] Define experiments
+- [ ] Run experiments
+- [ ] Record metrics
+- [ ] Compare
+- [ ] Analyze failures
 
----
-
-# 17. Phase 9 — Ablation Study
-
-This is mandatory for the research paper.
-
-Suppose the final model contains multiple components.
-
-Test each component independently.
-
-Example:
-
-```text
-Model A: STGCN
-
-Model B: STGCN + Weather
-
-Model C: STGCN + Dynamic Graph
-
-Model D: STGCN + Weather + Dynamic Graph
-```
-
-## Tasks
-
-* [ ] Define ablation experiments
-* [ ] Run experiments
-* [ ] Record metrics
-* [ ] Compare results
-* [ ] Analyze failures
-* [ ] Identify useful components
-
-## Deliverable
+Deliverable:
 
 ```text
 docs/experiments/ablation_study.md
@@ -829,70 +713,99 @@ docs/experiments/ablation_study.md
 
 ---
 
-# 18. Phase 10 — Error Analysis
+# 15. Phase 9 — Error Analysis
 
-Do not report only average metrics.
+Analyze:
 
-Analyze where the model fails.
+- [ ] Rush hours
+- [ ] High congestion
+- [ ] Low congestion
+- [ ] Different sensors
+- [ ] Different prediction horizons
+- [ ] Sudden traffic changes
+- [ ] Missing/noisy data
 
-## Analyze
+Questions:
 
-* [ ] Rush hours
-* [ ] High congestion
-* [ ] Low congestion
-* [ ] Different sensors
-* [ ] Different prediction horizons
-* [ ] Sudden traffic changes
-* [ ] Missing/noisy data
-* [ ] Weather conditions if applicable
-* [ ] Events if applicable
-* [ ] Accidents if applicable
+- Where are errors larger?
+- Which sensors are difficult?
+- Does error increase with horizon?
+- Does the proposed method change performance under difficult conditions?
 
-## Questions
-
-* Where does the model perform poorly?
-* Which nodes are difficult to predict?
-* Does performance degrade at 30/60 minutes?
-* Does the proposed improvement help during unusual conditions?
-* Does the proposed model actually beat STGCN?
+Do not invent explanations unsupported by experiments.
 
 ---
 
-# 19. Phase 11 — ML Inference Service
+# 16. Phase 10 — ML Inference Engine
 
-Once the research model works, create a reusable inference module.
+File:
 
-## Tasks
+```text
+src/inference/predictor.py
+```
 
-* [ ] Load trained model
-* [ ] Load preprocessing configuration
-* [ ] Load graph structure
-* [ ] Accept traffic input
-* [ ] Generate predictions
-* [ ] Inverse-transform predictions
-* [ ] Return structured results
-
-Target interface:
+Interface:
 
 ```python
 predictor.predict(input_data)
 ```
 
-## Deliverable
+Responsibilities:
 
-```text
-ml/inference/predictor.py
-```
+- [ ] Load trained model
+- [ ] Load preprocessing configuration
+- [ ] Load graph structure
+- [ ] Accept traffic input
+- [ ] Apply preprocessing
+- [ ] Generate prediction
+- [ ] Inverse-transform prediction
+- [ ] Return structured result
+
+This remains pure ML. No FastAPI required yet.
 
 ---
 
-# 20. Phase 12 — FastAPI Backend
+# 17. AI/Research Core Completion Milestone
 
-## Objective
+The first major target is:
 
-Expose the ML system through REST APIs.
+```text
+METR-LA
+   ↓
+Exploration
+   ↓
+Preprocessing
+   ↓
+DataLoader
+   ↓
+HA / LV / LR / LSTM
+   ↓
+STGCN
+   ↓
+Evaluation
+   ↓
+Literature Review
+   ↓
+Proposed Model
+   ↓
+Ablation Study
+   ↓
+Error Analysis
+   ↓
+Inference Engine
+```
 
-## Initial Endpoints
+At this point the AI/research component is ready for academic demonstration, project evaluation, and resume presentation.
+
+---
+
+# 18. Later Application Layer
+
+Only after the AI core is stable.
+
+## Phase 11 — FastAPI
+
+Endpoints:
 
 ```text
 GET  /health
@@ -904,55 +817,19 @@ POST /predict
 GET  /analytics
 ```
 
-## Tasks
+Connect the inference engine to the API.
 
-* [ ] Create FastAPI application
-* [ ] Configure environment variables
-* [ ] Create Pydantic schemas
-* [ ] Create API routes
-* [ ] Connect inference engine
-* [ ] Add error handling
-* [ ] Add API documentation
-* [ ] Add API tests
+## Phase 12 — PostgreSQL
 
----
-
-# 21. Phase 13 — PostgreSQL
-
-## Objective
-
-Store traffic and prediction information.
-
-## Table: roads
+Tables:
 
 ```text
-id
-name
-source_node
-destination_node
-geometry
+roads
+traffic_measurements
+predictions
 ```
 
-## Table: traffic_measurements
-
-```text
-id
-sensor_id
-timestamp
-traffic_value
-```
-
-## Table: predictions
-
-```text
-id
-sensor_id
-timestamp
-prediction
-model_version
-```
-
-Optional tables:
+Optional:
 
 ```text
 weather
@@ -960,113 +837,36 @@ events
 accidents
 ```
 
-Only create these if required by the selected research contribution.
+Only if needed by the final research model.
 
----
+## Phase 13 — React Dashboard
 
-# 22. Phase 14 — React Dashboard
+Sections:
 
-## Objective
+- Overview
+- Road Network
+- Prediction
+- Analytics
 
-Build a traffic intelligence dashboard.
+Features:
 
-## Dashboard Sections
+- Current traffic
+- Predicted congestion
+- Average speed
+- Alerts
+- Sensor/road selection
+- Prediction horizon
+- Historical traffic
+- Prediction accuracy
+- Model performance
+- Forecast charts
+- Road network visualization
 
-### Overview
+The dashboard should demonstrate the ML system, not be a generic admin panel.
 
-Display:
+## Phase 14 — Docker
 
-* Current traffic
-* Predicted congestion
-* Average speed
-* Active alerts
-
-### Road Network
-
-Display:
-
-* Road graph
-* Sensors
-* Current traffic
-* Predicted traffic
-* Congestion levels
-
-### Prediction
-
-Allow user to select:
-
-* Road
-* Sensor
-* Prediction horizon
-
-Display:
-
-```text
-Current
-   ↓
-+15 min
-   ↓
-+30 min
-   ↓
-+60 min
-```
-
-### Analytics
-
-Display:
-
-* Historical traffic
-* Prediction accuracy
-* Congestion trends
-* Prediction history
-* Model performance
-
----
-
-# 23. Phase 15 — Dashboard Design
-
-The dashboard should demonstrate the ML system.
-
-It should not look like a generic admin panel.
-
-Concept:
-
-```text
-+------------------------------------------------+
-| UrbanFlow AI                         LIVE       |
-+------------------------------------------------+
-|                                                |
-|              ROAD NETWORK MAP                  |
-|                                                |
-|        ●--------●--------●                     |
-|        |        |        |                     |
-|        ●--------●--------●                     |
-|                                                |
-+------------------------------------------------+
-| Congestion | Prediction | Average Speed | Alerts|
-|    67%     |    HIGH    |    34 km/h    |   3   |
-+------------------------------------------------+
-|                                                |
-| Traffic Forecast                              |
-|                                                |
-|       Actual                                   |
-|       Predicted                                |
-|                                                |
-+------------------------------------------------+
-```
-
----
-
-# 24. Phase 16 — Docker
-
-Create:
-
-```text
-Dockerfile
-docker-compose.yml
-```
-
-Initial services:
+Later:
 
 ```text
 frontend
@@ -1074,142 +874,72 @@ backend
 postgres
 ```
 
-Possible final architecture:
+Only introduce a separate ML service if genuinely necessary.
 
-```text
-frontend
-backend
-ml-service
-postgres
-```
+## Phase 15 — Testing
 
-Use a separate ML service only if the project actually requires it.
+ML:
 
----
+- Dataset tests
+- Preprocessing tests
+- Tensor shape tests
+- Forward-pass tests
+- Evaluation tests
+- Inference tests
 
-# 25. Phase 17 — Testing
+Later backend:
 
-## Machine Learning
+- API tests
+- Database tests
+- Prediction endpoint tests
+- Error handling
 
-* [ ] Dataset tests
-* [ ] Preprocessing tests
-* [ ] Tensor shape tests
-* [ ] Model forward-pass tests
-* [ ] Evaluation tests
-* [ ] Inference tests
+Later frontend:
 
-## Backend
+- Component tests
+- API integration tests
+- Responsive testing
 
-* [ ] API tests
-* [ ] Database tests
-* [ ] Prediction endpoint tests
-* [ ] Error handling tests
+## Phase 16 — Deployment
 
-## Frontend
-
-* [ ] Component tests
-* [ ] API integration tests
-* [ ] Responsive layout testing
-
----
-
-# 26. Phase 18 — Deployment
-
-## Tasks
-
-* [ ] Build Docker images
-* [ ] Configure production environment
-* [ ] Deploy backend
-* [ ] Deploy frontend
-* [ ] Deploy PostgreSQL
-* [ ] Configure environment variables
-* [ ] Configure CORS
-* [ ] Configure logging
-* [ ] Test production API
-* [ ] Test production dashboard
-
-## Final Flow
-
-```text
-User
-  ↓
-React Dashboard
-  ↓
-FastAPI
-  ↓
-ML Inference
-  ↓
-STGNN
-  ↓
-Prediction
-```
-
-PostgreSQL stores historical and prediction data.
+- Build Docker images
+- Configure production environment
+- Deploy backend
+- Deploy frontend
+- Deploy database
+- Configure environment variables
+- Configure CORS
+- Configure logging
+- Test production API
+- Test production dashboard
 
 ---
 
-# 27. Phase 19 — Research Paper
+# 19. Research Paper
 
-Recommended structure:
+Final structure:
 
-```text
 1. Abstract
-
 2. Introduction
-
 3. Related Work
-
 4. Problem Formulation
-
 5. Methodology
-
 6. Proposed Model
-
 7. Experimental Setup
-
 8. Results
-
 9. Ablation Study
-
 10. Error Analysis
-
 11. Limitations
-
 12. Conclusion
-
 13. Future Work
-```
 
-Important:
-
-Do not write final research claims before running the experiments.
-
-The results determine the claims.
+Do not write final research claims before experiments are complete.
 
 ---
 
-# 28. Phase 20 — Final Presentation
+# 20. Experiment Tracking
 
-Final presentation should cover:
-
-1. Problem
-2. Motivation
-3. Existing limitations
-4. Proposed system
-5. Dataset
-6. STGNN methodology
-7. Research contribution
-8. Experimental results
-9. System architecture
-10. Dashboard demonstration
-11. Conclusion
-12. Future work
-
----
-
-# 29. Experiment Tracking
-
-Every experiment must record:
+Every experiment records:
 
 ```text
 Model
@@ -1222,476 +952,191 @@ Epochs
 Optimizer
 Hidden dimensions
 Number of layers
-Training configuration
+Parameter count
+Training time
+Inference time
 MAE
 RMSE
 MAPE
-Training time
-Inference time
 Notes
 ```
 
-Example:
+Do not rely on memory for results.
+
+---
+
+# 21. Project Rules
+
+1. ML comes before UI.
+2. GitHub/local project is the source of truth.
+3. Colab is a temporary GPU runtime.
+4. Never hardcode local Mac paths into notebooks.
+5. Never change 12→3 into 12→12 just to fix an error.
+6. Never hide preprocessing bugs with notebook-specific reshape/unsqueeze hacks.
+7. Fix source code rather than patching symptoms.
+8. Verify saved data before training.
+9. Do not claim novelty before literature review.
+10. Do not fabricate experimental results.
+11. Track experiments.
+12. Keep research code separate from later production code.
+13. Every major result must be reproducible.
+14. Do not add external features without a clear research purpose.
+15. The proposed contribution must be experimentally measurable.
+16. Negative results are valid; do not manipulate results to appear positive.
+
+---
+
+# 22. Reset Status
 
 ```text
-Model: STGCN
-Dataset: METR-LA
-Input: 12 steps
-Output: 3 steps
-Learning Rate: 0.001
-Batch Size: 32
-Epochs: 100
-MAE: ...
-RMSE: ...
-MAPE: ...
-```
-
-Keep experiment results organized.
-
-Do not rely on memory.
-
----
-
-# 30. Milestones
-
-## Milestone 1 — Dataset Ready
-
-Definition of done:
-
-* [ ] Dataset downloaded
-* [ ] Dataset understood
-* [ ] Nodes identified
-* [ ] Graph understood
-* [ ] Traffic visualized
-* [ ] Dataset documented
-
----
-
-## Milestone 2 — Data Pipeline Ready
-
-Definition of done:
-
-* [ ] Preprocessing works
-* [ ] Normalization works
-* [ ] Graph matrix works
-* [ ] Sliding windows work
-* [ ] DataLoader works
-* [ ] Train/validation/test split works
-
----
-
-## Milestone 3 — Baselines Ready
-
-Definition of done:
-
-* [ ] Historical Average
-* [ ] Last Value
-* [ ] Linear Regression
-* [ ] LSTM
-* [ ] Metrics calculated
-* [ ] Results saved
-
----
-
-## Milestone 4 — STGCN Ready
-
-Definition of done:
-
-* [ ] STGCN implemented
-* [ ] Model trains
-* [ ] Validation works
-* [ ] Test results generated
-* [ ] Baseline comparison completed
-
----
-
-## Milestone 5 — Research Direction Selected
-
-Definition of done:
-
-* [ ] Literature review completed
-* [ ] Existing approaches compared
-* [ ] Research gap identified
-* [ ] Research hypothesis defined
-* [ ] One research direction selected
-
----
-
-## Milestone 6 — Proposed Model Ready
-
-Definition of done:
-
-* [ ] Proposed model implemented
-* [ ] Training completed
-* [ ] Baseline comparison completed
-* [ ] Ablation study completed
-* [ ] Error analysis completed
-
----
-
-## Milestone 7 — ML Inference Ready
-
-Definition of done:
-
-* [ ] Model loading works
-* [ ] Preprocessing works
-* [ ] Prediction works
-* [ ] Inverse transformation works
-* [ ] Inference API interface defined
-
----
-
-## Milestone 8 — Backend Ready
-
-Definition of done:
-
-* [ ] FastAPI running
-* [ ] ML inference integrated
-* [ ] PostgreSQL connected
-* [ ] Prediction API working
-* [ ] API tests passing
-
----
-
-## Milestone 9 — Dashboard Ready
-
-Definition of done:
-
-* [ ] Road network visualization
-* [ ] Current traffic
-* [ ] Predictions
-* [ ] Historical analytics
-* [ ] Prediction history
-* [ ] Model metrics
-
----
-
-## Milestone 10 — Production Ready
-
-Definition of done:
-
-* [ ] Docker setup complete
-* [ ] Application deployed
-* [ ] README complete
-* [ ] Demo working
-* [ ] Research results finalized
-* [ ] Presentation finalized
-
----
-
-# 31. Suggested 12-Week Timeline
-
-## Week 1
-
-Dataset + Environment
-
-* [ ] Setup repository
-* [ ] Setup Python environment
-* [ ] Select dataset
-* [ ] Download dataset
-* [ ] Explore dataset
-
-## Week 2
-
-Data Pipeline
-
-* [ ] Preprocessing
-* [ ] Normalization
-* [ ] Graph construction
-* [ ] Sliding windows
-* [ ] DataLoader
-
-## Week 3
-
-Baselines
-
-* [ ] Historical Average
-* [ ] Last Value
-* [ ] Linear Regression
-* [ ] LSTM
-* [ ] Evaluation
-
-## Week 4
-
-STGCN
-
-* [ ] Study architecture
-* [ ] Implement
-* [ ] Train
-* [ ] Evaluate
-* [ ] Tune
-
-## Week 5
-
-Research Review
-
-* [ ] Read papers
-* [ ] Compare models
-* [ ] Identify limitations
-* [ ] Identify research gap
-
-## Week 6
-
-Research Design
-
-* [ ] Select research direction
-* [ ] Define hypothesis
-* [ ] Design proposed model
-
-## Week 7
-
-Proposed Model
-
-* [ ] Implement
-* [ ] Train
-* [ ] Tune
-
-## Week 8
-
-Experiments
-
-* [ ] Baseline comparison
-* [ ] Ablation study
-* [ ] Error analysis
-
-## Week 9
-
-ML Finalization
-
-* [ ] Final model
-* [ ] Final metrics
-* [ ] Inference pipeline
-* [ ] Documentation
-
-## Week 10
-
-Backend
-
-* [ ] FastAPI
-* [ ] PostgreSQL
-* [ ] ML integration
-* [ ] API tests
-
-## Week 11
-
-Frontend
-
-* [ ] React
-* [ ] Traffic map
-* [ ] Prediction charts
-* [ ] Analytics
-
-## Week 12
-
-Deployment + Finalization
-
-* [ ] Docker
-* [ ] Deployment
-* [ ] Documentation
-* [ ] Research paper
-* [ ] Presentation
-* [ ] Demo
-
----
-
-# 32. Project Rules
-
-## Rule 1
-
-Do not build the UI before the ML pipeline works.
-
-## Rule 2
-
-Do not claim novelty before the literature review.
-
-## Rule 3
-
-Do not compare only against weak baselines.
-
-## Rule 4
-
-Do not use only one evaluation metric.
-
-## Rule 5
-
-Do not randomly modify the model until the result improves.
-
-Track every experiment.
-
-## Rule 6
-
-Every major result must be reproducible.
-
-## Rule 7
-
-Keep research code separate from production code.
-
-## Rule 8
-
-Do not add weather, events, or accidents unless they have a clear research purpose.
-
-## Rule 9
-
-The research contribution must be measurable.
-
-## Rule 10
-
-If the proposed method does not improve performance, investigate why.
-
-Do not pretend that a negative result is a positive result.
-
----
-
-# 33. Current Project Status
-
-Update this section as development progresses.
-
-```text
-Phase 0  — Environment        [ ] Not Started
-Phase 1  — Dataset            [ ] Not Started
-Phase 2  — Preprocessing      [ ] Not Started
-Phase 3  — Baselines          [ ] Not Started
-Phase 4  — STGCN              [ ] Not Started
-Phase 5  — Evaluation         [ ] Not Started
-Phase 6  — Literature Review  [ ] Not Started
-Phase 7  — Research Model     [ ] Not Started
-Phase 8  — Experiments        [ ] Not Started
-Phase 9  — ML Inference       [ ] Not Started
-Phase 10 — FastAPI            [ ] Not Started
-Phase 11 — PostgreSQL         [ ] Not Started
-Phase 12 — Dashboard          [ ] Not Started
-Phase 13 — Docker             [ ] Not Started
-Phase 14 — Deployment         [ ] Not Started
-Phase 15 — Research Paper     [ ] Not Started
-Phase 16 — Presentation       [ ] Not Started
+Phase 0  — Environment + Git + Colab       [ ] Not Started
+Phase 1  — Dataset Exploration             [ ] Not Started
+Phase 2  — Preprocessing                   [ ] Not Started
+Phase 3  — Baselines                       [ ] Not Started
+Phase 4  — STGCN                           [ ] Not Started
+Phase 5  — Evaluation                      [ ] Not Started
+Phase 6  — Literature Review               [ ] Not Started
+Phase 7  — Proposed Model                  [ ] Not Started
+Phase 8  — Ablation                        [ ] Not Started
+Phase 9  — Error Analysis                  [ ] Not Started
+Phase 10 — ML Inference                    [ ] Not Started
+
+========== AI/RESEARCH CORE COMPLETE ==========
+
+Phase 11 — FastAPI                         [ ] Later
+Phase 12 — PostgreSQL                      [ ] Later
+Phase 13 — React Dashboard                 [ ] Later
+Phase 14 — Docker                          [ ] Later
+Phase 15 — Testing                         [ ] Later
+Phase 16 — Deployment                      [ ] Later
+Phase 17 — Research Paper                  [ ] Later
+Phase 18 — Presentation                    [ ] Later
 ```
 
 ---
 
-# 34. Immediate Next Steps
+# 23. Immediate Next Steps
 
-Do ONLY these tasks first.
+ONLY work on these first:
 
-* [ ] Create GitHub repository
-* [ ] Create Python virtual environment
-* [ ] Create project structure
-* [ ] Select initial dataset
-* [ ] Download dataset
-* [ ] Create dataset exploration notebook
-* [ ] Understand nodes
-* [ ] Understand graph structure
-* [ ] Visualize traffic data
-* [ ] Document dataset characteristics
+1. Clean/reinitialize repository
+2. Configure GitHub
+3. Configure requirements.txt
+4. Configure .gitignore
+5. Configure project_paths.py
+6. Set up Colab Git workflow
+7. Verify Colab GPU
+8. Obtain METR-LA
+9. Run dataset exploration
+10. Build preprocessing
+11. Verify exact 4D tensor contract
+12. Build DataLoader
+13. Run baseline models
+14. Implement/train STGCN
+15. Evaluate models
 
 Do NOT start:
 
-* [ ] FastAPI
-* [ ] React
-* [ ] PostgreSQL
-* [ ] Docker
-* [ ] Weather integration
-* [ ] Event integration
-* [ ] Accident integration
-* [ ] Research improvement
+- FastAPI
+- PostgreSQL
+- React
+- Docker
+- Deployment
+- Live traffic APIs
+- Weather integration
+- Event integration
+- Accident integration
 
-until the initial ML pipeline is working.
+until the AI/research core is stable.
 
 ---
 
-# 35. Final Target Architecture
+# 24. Antigravity Agent Implementation Rules
+
+When asked to implement a task, the agent must actually implement it.
+
+Do NOT merely:
+- Read files
+- Create a verification-only script
+- Explain what should be changed
+- Produce an implementation plan
+- Claim something is fixed without executing it
+
+Required workflow:
+
+```text
+Inspect
+  ↓
+EDIT ACTUAL SOURCE FILES
+  ↓
+RUN IMPLEMENTATION
+  ↓
+TEST
+  ↓
+FIX FAILURES
+  ↓
+RUN AGAIN
+  ↓
+SHOW ACTUAL CHANGES + RESULTS
+```
+
+For preprocessing:
+
+```text
+Source code
+    ↓
+Regenerate sequences.npz
+    ↓
+Inspect saved shapes
+    ↓
+DataLoader test
+    ↓
+Model forward-pass test
+```
+
+Never consider a task complete merely because a verification script was created.
+
+For the canonical preprocessing contract, completion requires actual generated data:
+
+```text
+X = (N, 12, 207, 1)
+Y = (N, 3, 207, 1)
+```
+
+and actual DataLoader/model verification.
+
+---
+
+# 25. Final Target Architecture
 
 ```text
                          URBANFLOW AI
                               |
-             +----------------+----------------+
-             |                                 |
-          RESEARCH                         SOFTWARE
-             |                                 |
-       STGNN Model                       FastAPI Backend
-             |                                 |
-    Research Improvement                  PostgreSQL
-             |                                 |
-       Experiments                       React Dashboard
-             |                                 |
-       Ablation Study                       Docker
-             |                                 |
-      Research Paper                       Deployment
+                    ┌─────────┴─────────┐
+                    |                   |
+                 RESEARCH          APPLICATION
+                    |                   |
+              Traffic Dataset       FastAPI
+                    |                   |
+              Preprocessing        PostgreSQL
+                    |                   |
+               Baselines           React
+                    |                   |
+                  STGCN              Docker
+                    |
+             Research Model
+                    |
+              Experiments
+                    |
+             Ablation Study
+                    |
+             Error Analysis
+                    |
+             ML Inference
 ```
 
-Final technical flow:
+Final objective:
 
-```text
-                    +----------------------+
-                    |   Traffic Dataset    |
-                    +----------+-----------+
-                               |
-                               v
-                    +----------------------+
-                    | Data Preprocessing   |
-                    +----------+-----------+
-                               |
-                               v
-                    +----------------------+
-                    | Graph Construction   |
-                    +----------+-----------+
-                               |
-                               v
-                    +----------------------+
-                    | Baseline Models      |
-                    +----------+-----------+
-                               |
-                               v
-                    +----------------------+
-                    | STGCN                |
-                    +----------+-----------+
-                               |
-                               v
-                    +----------------------+
-                    | Research Improvement |
-                    +----------+-----------+
-                               |
-                               v
-                    +----------------------+
-                    | Evaluation           |
-                    +----------+-----------+
-                               |
-                               v
-                    +----------------------+
-                    | ML Inference Engine  |
-                    +----------+-----------+
-                               |
-                               v
-                    +----------------------+
-                    | FastAPI Backend      |
-                    +----------+-----------+
-                               |
-                +--------------+--------------+
-                |                             |
-                v                             v
-       +----------------+           +----------------+
-       | PostgreSQL     |           | React          |
-       | Database       |           | Dashboard      |
-       +----------------+           +----------------+
-                                             |
-                                             v
-                                    +----------------+
-                                    | Docker / Cloud |
-                                    +----------------+
-```
+A reproducible traffic forecasting research system with a validated STGNN model, a measurable research contribution, and a later production-style software platform built around the model.
 
-# Final Objective
-
-UrbanFlow AI should not simply be:
-
-"An AI traffic dashboard."
-
-It should be:
-
-"A reproducible traffic forecasting research system with a validated STGNN model, a measurable research contribution, and a production-style software platform built around the model."
-
-The ML research comes first.
-
-The dashboard comes second.
-
-```
-```
+**AI/research first. Application second.**
