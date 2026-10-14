@@ -1,0 +1,31 @@
+{
+  "dataset": "METR-LA",
+  "num_test_samples": 6841,
+  "num_nodes": 207,
+  "history_steps": 12,
+  "horizon_steps": 3,
+  "forecast_interval_minutes": 5,
+  "mc_samples": 30,
+  "dropout_probability": 0.2,
+  "uncertainty_method": "MC Dropout",
+  "checkpoint": "experiments/proposed/best_model.pt",
+  "predictive_mean_shape": [
+    6841,
+    3,
+    207,
+    1
+  ],
+  "predictive_std_shape": [
+    6841,
+    3,
+    207,
+    1
+  ],
+  "checkpoint_prediction_max_difference": 0.0,
+  "checkpoint_prediction_mean_difference": 0.0,
+  "checkpoint_prediction_rmse_difference": 0.0,
+  "calibration_method": "validation_based_scalar_multiplier",
+  "calibration_factor": 22.5,
+  "validation_coverage_percent": 94.99979476030126,
+  "nominal_coverage_percent": 95.0
+}

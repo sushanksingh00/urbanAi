@@ -1,0 +1,22 @@
+{
+  "experiment": "synthetic_abnormal_traffic_stress_test",
+  "model": "MultiScaleSTGCN",
+  "dataset": "METR-LA",
+  "num_sensors": 207,
+  "input_steps": 12,
+  "output_steps": 3,
+  "sampling_interval_minutes": 5,
+  "perturbation_type": "traffic_speed_reduction",
+  "perturbation_steps": 3,
+  "affected_sensor_fraction": 0.1,
+  "affected_sensor_count": 21,
+  "severities": [
+    0.05,
+    0.1,
+    0.2,
+    0.3
+  ],
+  "seed": 42,
+  "checkpoint": "/content/drive/MyDrive/urbanAi/experiments/proposed/best_model.pt",
+  "note": "Controlled synthetic stress test. Perturbations do not represent specific real-world incidents."
+}

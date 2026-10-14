@@ -1,0 +1,77 @@
+{
+  "dataset": "METR-LA",
+  "num_sensors": 207,
+  "sampling_interval_minutes": 5,
+  "input_steps": 12,
+  "output_steps": 3,
+  "input_duration_minutes": 60,
+  "forecast_horizon_minutes": 15,
+  "train_ratio": 0.7,
+  "validation_ratio": 0.1,
+  "test_ratio": 0.2,
+  "raw_shape": [
+    34272,
+    207
+  ],
+  "train_raw_shape": [
+    23990,
+    207
+  ],
+  "val_raw_shape": [
+    3427,
+    207
+  ],
+  "test_raw_shape": [
+    6855,
+    207
+  ],
+  "train_sequence_shape_X": [
+    23976,
+    12,
+    207,
+    1
+  ],
+  "train_sequence_shape_Y": [
+    23976,
+    3,
+    207,
+    1
+  ],
+  "val_sequence_shape_X": [
+    3413,
+    12,
+    207,
+    1
+  ],
+  "val_sequence_shape_Y": [
+    3413,
+    3,
+    207,
+    1
+  ],
+  "test_sequence_shape_X": [
+    6841,
+    12,
+    207,
+    1
+  ],
+  "test_sequence_shape_Y": [
+    6841,
+    3,
+    207,
+    1
+  ],
+  "normalization": {
+    "method": "standardization",
+    "fit_on": "training_split_only",
+    "formula": "(x - train_mean) / train_std"
+  },
+  "raw_start": "2012-03-01T00:00:00",
+  "raw_end": "2012-06-27T23:55:00",
+  "train_start": "2012-03-01T00:00:00",
+  "train_end": "2012-05-23T07:05:00",
+  "validation_start": "2012-05-23T07:10:00",
+  "validation_end": "2012-06-04T04:40:00",
+  "test_start": "2012-06-04T04:45:00",
+  "test_end": "2012-06-27T23:55:00"
+}

@@ -1,0 +1,19 @@
+{
+  "experiment": "proposed_multiscale_stgcn",
+  "dataset": "METR-LA",
+  "input_steps": 12,
+  "output_steps": 3,
+  "num_nodes": 207,
+  "hidden_channels": 32,
+  "temporal_kernels": [
+    3,
+    5
+  ],
+  "dropout": 0.2,
+  "batch_size": 64,
+  "learning_rate": 0.001,
+  "weight_decay": 0.0001,
+  "epochs": 20,
+  "gradient_clip": 5.0,
+  "checkpoint": "best_model.pt"
+}

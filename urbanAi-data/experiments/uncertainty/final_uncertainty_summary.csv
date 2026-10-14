@@ -1,0 +1,11 @@
+analysis,metric,value,unit
+Raw MC Dropout,Mean uncertainty,0.053441137075424194,standardized
+Raw MC Dropout,Median uncertainty,0.029698651283979416,standardized
+Error-Uncertainty,Pearson correlation,0.4069932699203491,correlation
+Error-Uncertainty,Spearman correlation,0.452586685855059,correlation
+Raw 95% interval,Test coverage,19.38597934543099,percent
+Raw interval,Mean width,0.20948921144008636,standardized
+Calibration,Calibration factor,22.5,multiplier
+Calibration,Validation coverage,94.99979476030126,percent
+Calibrated 95% interval,Test coverage,94.94616738472519,percent
+Calibrated interval,Mean width,2.404850482940674,standardized

@@ -1,0 +1,126 @@
+{
+  "dataset_shape": [
+    34272,
+    207
+  ],
+  "split_lengths": {
+    "train": 23990,
+    "validation": 5140,
+    "test": 5142
+  },
+  "split_ranges": {
+    "train": {
+      "start": "2012-03-01T00:00:00",
+      "end": "2012-05-23T07:05:00"
+    },
+    "validation": {
+      "start": "2012-05-23T07:10:00",
+      "end": "2012-06-10T03:25:00"
+    },
+    "test": {
+      "start": "2012-06-10T03:30:00",
+      "end": "2012-06-27T23:55:00"
+    }
+  },
+  "sequence_shapes": {
+    "train": {
+      "X": [
+        23976,
+        12,
+        207,
+        1
+      ],
+      "Y": [
+        23976,
+        3,
+        207,
+        1
+      ]
+    },
+    "validation": {
+      "X": [
+        5126,
+        12,
+        207,
+        1
+      ],
+      "Y": [
+        5126,
+        3,
+        207,
+        1
+      ]
+    },
+    "test": {
+      "X": [
+        5128,
+        12,
+        207,
+        1
+      ],
+      "Y": [
+        5128,
+        3,
+        207,
+        1
+      ]
+    }
+  },
+  "scaler": {
+    "class": "StandardScaler",
+    "n_features_in": 207
+  },
+  "checks": {
+    "train": {
+      "scaled": {
+        "name": "train_scaled",
+        "shape": [
+          23990,
+          207
+        ],
+        "dtype": "float32",
+        "nan_count": 0,
+        "inf_count": 0,
+        "is_chronological": true
+      },
+      "X_nan": 0,
+      "Y_nan": 0,
+      "X_inf": 0,
+      "Y_inf": 0
+    },
+    "validation": {
+      "scaled": {
+        "name": "validation_scaled",
+        "shape": [
+          5140,
+          207
+        ],
+        "dtype": "float32",
+        "nan_count": 0,
+        "inf_count": 0,
+        "is_chronological": true
+      },
+      "X_nan": 0,
+      "Y_nan": 0,
+      "X_inf": 0,
+      "Y_inf": 0
+    },
+    "test": {
+      "scaled": {
+        "name": "test_scaled",
+        "shape": [
+          5142,
+          207
+        ],
+        "dtype": "float32",
+        "nan_count": 0,
+        "inf_count": 0,
+        "is_chronological": true
+      },
+      "X_nan": 0,
+      "Y_nan": 0,
+      "X_inf": 0,
+      "Y_inf": 0
+    }
+  }
+}

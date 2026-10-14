@@ -1,0 +1,4 @@
+Experiment,Temporal Kernels,Purpose
+STGCN_3x3,"(3,)",Single-scale temporal baseline
+STGCN_5x5,"(5,)",Longer temporal receptive field
+MultiScale_3_5,"(3, 5)",Proposed multi-scale temporal modeling

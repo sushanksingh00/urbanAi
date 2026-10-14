@@ -1,0 +1,53 @@
+{
+  "train": {
+    "scaled": {
+      "name": "train_scaled",
+      "shape": [
+        23990,
+        207
+      ],
+      "dtype": "float32",
+      "nan_count": 0,
+      "inf_count": 0,
+      "is_chronological": true
+    },
+    "X_nan": 0,
+    "Y_nan": 0,
+    "X_inf": 0,
+    "Y_inf": 0
+  },
+  "validation": {
+    "scaled": {
+      "name": "validation_scaled",
+      "shape": [
+        5140,
+        207
+      ],
+      "dtype": "float32",
+      "nan_count": 0,
+      "inf_count": 0,
+      "is_chronological": true
+    },
+    "X_nan": 0,
+    "Y_nan": 0,
+    "X_inf": 0,
+    "Y_inf": 0
+  },
+  "test": {
+    "scaled": {
+      "name": "test_scaled",
+      "shape": [
+        5142,
+        207
+      ],
+      "dtype": "float32",
+      "nan_count": 0,
+      "inf_count": 0,
+      "is_chronological": true
+    },
+    "X_nan": 0,
+    "Y_nan": 0,
+    "X_inf": 0,
+    "Y_inf": 0
+  }
+}

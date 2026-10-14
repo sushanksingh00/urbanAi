@@ -1,0 +1,26 @@
+{
+  "model": "MultiScaleSTGCN",
+  "dataset": "METR-LA",
+  "input_steps": 12,
+  "output_steps": 3,
+  "num_nodes": 207,
+  "kernels": [
+    3,
+    5
+  ],
+  "mc_samples": 30,
+  "dropout": 0.2,
+  "checkpoint": "/content/experiments/multiscale_ablation/kernels_3_5/best_model.pt",
+  "raw_test_coverage_percent": 36.235344297348966,
+  "calibration_factor_selected_on_validation": 12.627405481096218,
+  "calibrated_validation_coverage_percent": 94.99686950482501,
+  "calibrated_test_coverage_percent": 94.78598419447393,
+  "calibrated_test_mean_interval_width": 40.774810791015625,
+  "test_metrics": {
+    "MAE": 6.463423252105713,
+    "RMSE": 11.227373123168945,
+    "MAPE_percent": 13.868892669677734
+  },
+  "uncertainty_error_pearson": 0.3848366388795667,
+  "uncertainty_error_spearman": 0.4636543085000798
+}

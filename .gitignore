@@ -1,45 +1,22 @@
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
+cat >> .gitignore <<'EOF'
 
-# Virtual environment
-.venv/
-venv/
+# Large datasets and generated experiment arrays
+*.npy
+*.npz
+*.h5
+*.hdf5
 
-# Jupyter
-.ipynb_checkpoints/
-
-# Data
-data/raw/*
-data/processed/*
-data/external/*
-
-# Models
+# Model checkpoints
 *.pt
 *.pth
 *.ckpt
 
-# Experiment outputs
-experiments/*
-
-# OS
-.DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
-
-# Environment
-.env
-
+# Local environment and temporary files
+.venv/
 __pycache__/
 *.py[cod]
-.ipynb_checkpoints/
-
-data/raw/*
-data/processed/*
-data/external/*
-
-*.npz
+.DS_Store
+**/~$*.xlsx
+EOF
+# Serialized datasets and graph artifacts
+*.pkl
